@@ -15,44 +15,63 @@
 		</ul>		
 	</div>
 	
-	<div class="content">
+	<!--<div class="content">
 		
-	<ul class="data-list list-left">
-		<li class="data-item">
-			<image class="data-img" mode="widthFix" src="../../static/images/img1.png"/>
-			<p class="data-title">标题标题表提标题提tit提提</p>	
-			<div class="user-info">
-				<div class="user-image">
-					<image class="user-img" src="../../static/images/user.png"/>
+		<ul class="data-list list-left">
+			<li class="data-item">
+				<image class="data-img" mode="widthFix" src="../../static/images/img1.png"/>
+				<p class="data-title">标题标题表提标题提tit提提</p>	
+				<div class="user-info">
+					<div class="user-image">
+						<image class="user-img" src="../../static/images/user.png"/>
+					</div>
+					<div class="info-txt">
+						<p class="name">张三李四</p>
+						<p class="creatTime">2018-10-10 12:30</p>
+					</div>		
 				</div>
-				<div class="info-txt">
-					<p class="name">张三李四</p>
-					<p class="creatTime">2018-10-10 12:30</p>
-				</div>		
-			</div>
-		</li>
-	</ul>
-	
-	<ul class="data-list list-right">
-		<li class="data-item">
-			<image class="data-img" mode="widthFix" src="../../static/images/bg_personal@2x.png"/>
-			<p class="data-title">标题标题表提标题提tit提提</p>	
-			<div class="user-info">
-				<div class="user-image">
-					<image class="user-img" src="../../static/images/user.png"/>
+			</li>
+		</ul>
+		
+		<ul class="data-list list-right">
+			<li class="data-item">
+				<image class="data-img" mode="widthFix" src="../../static/images/bg_personal@2x.png"/>
+				<p class="data-title">标题标题表提标题提tit提提</p>	
+				<div class="user-info">
+					<div class="user-image">
+						<image class="user-img" src="../../static/images/user.png"/>
+					</div>
+					<div class="info-txt">
+						<p class="name">张三李四</p>
+						<p class="creatTime">2018-10-10 12:30</p>
+					</div>		
 				</div>
-				<div class="info-txt">
-					<p class="name">张三李四</p>
-					<p class="creatTime">2018-10-10 12:30</p>
-				</div>		
-			</div>
-		</li>
-	</ul>	
+			</li>
+		</ul>	
+
+	<div class="btn-box">
+			<image class="photo-img" src="../../static/images/photo/icon_canmera.png"/>
+	</div>
+
+	</div>
+	-->
 	
+	<div class="map-content">
+		
+		<map class="map" id="map" :longitude="longitude" :latitude="latitude" scale="14" show-location="true" :markers="markers" @markertap="makertap">
+			
+
+		  <cover-view class="btn-box" @tap="makertap" >
+		      <cover-image class="photo-img" src="../../static/images/photo/icon_canmera.png" />
+		  </cover-view>
+			
+			
+		</map>
+		
 	</div>
 	
 	
-	
+
 
   </div>
 </template>
@@ -63,6 +82,10 @@ export default {
   data () {
     return {
       motto: 'Hello miniprograme',
+      markers: [],
+      latitude: '',
+      longitude: '',
+      MAP:{},
       userInfo: {
         nickName: 'mpvue',
         avatarUrl: 'http://mpvue.com/assets/logo.png'
@@ -72,6 +95,9 @@ export default {
 
   components: {},
   methods: {
+  	makertap(){
+  		
+  	},
     bindViewTap () {
       const url = '../logs/main'
       if (mpvuePlatform === 'wx') {
@@ -81,14 +107,62 @@ export default {
       }
     },
     clickHandle (ev) {
-      console.log('clickHandle:', ev)
+
       // throw {message: 'custom test'}
+    },
+    initMap(){
+    	let vm = this;
+    	console.log(123);
+	   	wx.getLocation({
+	  		success:function(res){
+	  			vm.latitude = res.latitude;
+	  			vm.longitude = res.longitude;
+	  			vm.markers = [
+	  					{
+								id:'456',//	标记点id	Number	否	marker点击事件回调会返回此id。建议为每个marker设置上Number类型id，保证更新marker时有更好的性能。	
+								latitude:res.latitude,//	纬度	Number	是	浮点数，范围 -90 ~ 90	
+								longitude:res.longitude,//	经度	Number	是	浮点数，范围 -180 ~ 180	
+								title:'',	//标注点名	String	否		
+								zIndex:-1,//	显示层级	Number	否		2.3.0
+								iconPath:'../../static/images/img1.png',//	显示的图标	String	是	项目目录下的图片路径，支持相对路径写法，以'/'开头则表示相对小程序根目录；也支持临时路径和网络图片（2.3.0）	
+								rotate:0,//	旋转角度	Number	否	顺时针旋转的角度，范围 0 ~ 360，默认为 0	
+								alpha:1,//	标注的透明度	Number	否	默认1，无透明，范围 0 ~ 1	
+								width:'80rpx',//	标注图标宽度	Number / String	否	默认为图片实际宽度，单位px（2.4.0起支持rpx）	
+								height:'80rpx',//	标注图标高度	Number / String	否	默认为图片实际高度，单位px（2.4.0起支持rpx）
+	  						label:{
+									content:'50',//	文本	String	1.2.0
+									color:'#fff',//	文本颜色	String	1.2.0
+									fontSize:12,//	文字大小	Number / String	1.2.0
+									borderRadius:'100px',//	边框圆角	Number / String	1.2.0
+									borderWidth:'2px',//	边框宽度	Number / String	2.3.0
+									borderColor:'#ff5b40',//	边框颜色	String	2.3.0
+									bgColor:'#ff5b40',//	背景色	String	1.2.0
+									anchorX:'20rpx',
+									anchorY:'-100rpx',
+									padding:2,//	文本边缘留白	Number / String	1.2.0
+									display:'ALWAYS',//	'BYCLICK':点击显示; 'ALWAYS':常显	String	1.2.0
+									textAlign:'center'//	文本对齐方式。有效值: left, right, center	String	  							
+	  						}
+	  						
+	  						
+	  					}
+	  			]
+	  			
+	  			
+	  		},
+	  		fail:function(){
+	  			
+	  		}
+	  		
+	  	})   	
     }
   },
 
-  created () {
-    // let app = getApp()
-    console.log(12312)
+  onLoad () {
+
+  	this.initMap();
+  	
+  	
   }
 }
 </script>
@@ -218,8 +292,39 @@ export default {
 			}
 		}
 	}
+.map-content{
+	box-sizing: border-box;
+	padding-top: 36px;
+	height: 100%;
+	width: 100%;
+}
+.map{
+	height: 100vh;
+	width: 100%;
+}	
+	
 image{
 	height: auto;
 	width: auto;
 }
+
+.btn-box{
+	position: fixed;
+	z-index: 10000;
+	height: 40px;
+	width: 40px;
+	border-radius:50%;
+	box-shadow: 0 6px 10px 0 #ff5b40;
+	background: #ff5b40;
+	bottom: 15px;
+	left: 50%;
+	overflow: hidden;
+	margin-left: -20px;
+	box-sizing: border-box;
+	.photo-img{
+		height: 41px;
+		width: 41px;
+	}
+}
+
 </style>

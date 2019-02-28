@@ -1,7 +1,7 @@
 {
   "pages": [
+  	"pages/fans/main",
     "pages/index/main",
-    "pages/fans/main",
     "pages/message/main",
     "pages/myZoe/main"
   ],
@@ -11,6 +11,11 @@
     "navigationBarTitleText": "快看-Quick",
     "navigationBarTextStyle": "black"
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },    
   "tabBar": {
     "color": "#999",
     "backgroundColor": "#fff",
@@ -18,25 +23,25 @@
     "borderStyle": "white",
 
     "list": [{
-      "text": "首页",
+      "text": "",
       "pagePath": "pages/index/main",
       "iconPath": "static/images/tabar/icon_home.png",
       "selectedIconPath": "static/images/tabar/icon_home_press.png"
     },
      {
-      "text": "粉丝",
+      "text": "",
       "pagePath": "pages/fans/main",
       "iconPath": "static/images/tabar/icon_friend.png",
       "selectedIconPath": "static/images/tabar/icon_friend_press.png"
     },
      {
-      "text": "消息",
+      "text": "",
       "pagePath": "pages/message/main",
       "iconPath": "static/images/tabar/icon_talk.png",
       "selectedIconPath": "static/images/tabar/icon_talk_press.png"
     },    
      {
-      "text": "我的",
+      "text": "",
       "pagePath": "pages/myZoe/main",
       "iconPath": "static/images/tabar/icon_personal.png",
       "selectedIconPath": "static/images/tabar/icon_personal_press.png"

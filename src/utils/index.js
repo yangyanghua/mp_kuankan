@@ -1,3 +1,9 @@
+
+
+
+import {BMapWX} from './bmap-wx.js'
+
+
 function formatNumber (n) {
   const str = n.toString()
   return str[1] ? str : `0${str}`
@@ -18,7 +24,13 @@ export function formatTime (date) {
   return `${t1} ${t2}`
 }
 
+export function	getAMAP(){
+		return  new BMapWX({ak: 'yvzV79AGTVUuC6n6LYzFfT933Oh1XIkC'});  	
+	}
+
+
 export default {
   formatNumber,
-  formatTime
+  formatTime,
+  getAMAP
 }
