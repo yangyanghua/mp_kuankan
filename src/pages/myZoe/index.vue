@@ -32,8 +32,12 @@
 								<image class="sex-img" mode="aspectFit" src="../../static/images/icon_boy.png"/>
 							</p>
 							<p class="lv"><image class="lv-img" mode="aspectFit" src="../../static/images/btnphontoer12x.png"/></p>
-							
 						</div>
+						
+						<div class="right-box">
+								<image class="right-iocn" mode="aspectFit" src="../../static/images/right.png"/>
+						</div>
+						
 					</div>
 					<p class="introduce">但是这个属性只支持单行文本的溢出显示省略号，如果我们要实现多行文本溢出显示省略号呢。接下来重点说一说多行文本溢出显示省略号，如下。</p>
 					<ul class="navList">
@@ -268,8 +272,21 @@ export default {
 
 
 .header .userInfo .baseInfo{
+	position: relative;
 	display: flex;
 	height: 1.3rem;
+	.right-box{
+		position: absolute;
+		height: 60px;
+		width: 60px;
+		top:20px;
+		right:0;
+		.right-iocn{
+			float: right;
+			height: 20px;
+			width: 18px;
+		}
+	}
 }
 
 .header .userInfo .sexImage{

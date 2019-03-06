@@ -6,9 +6,9 @@
 			<li class="left-btn">
 				<image class="icon_search" src="../../static/images/icon_search.png"/>
 			</li>
-			<li class="nav-item">关注</li>
-			<li class="nav-item">发现</li>
-			<li class="nav-item">热门</li>
+			<li class="nav-item" v-bind:class="{'active':active == 1}" @tap="handleNav(1)" >关注</li>
+			<li class="nav-item" v-bind:class="{'active':active == 2}" @tap="handleNav(2)" >发现</li>
+			<li class="nav-item" v-bind:class="{'active':active == 3}" @tap="handleNav(3)" >热门</li>
 			<li class="right-btn">
 					<image class="icon_right" src="../../static/images/icon_map.png"/>
 			</li>
@@ -58,7 +58,7 @@
 	
 	<div class="map-content">
 		
-		<map class="map" id="map" :longitude="longitude" :latitude="latitude" scale="14" show-location="true" :markers="markers" @markertap="makertap">
+		<map class="map" id="map" :longitude="longitude" :latitude="latitude" scale="6" show-location="true" :markers="markers"   @regionchange="regionchange" @end="regionchange"    @markertap="makertap">
 			
 
 		  <cover-view class="btn-box" @tap="makertap" >
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-
+import {findListMap,hotListMap} from './srevice.js';
 export default {
   data () {
     return {
@@ -86,6 +86,9 @@ export default {
       latitude: '',
       longitude: '',
       MAP:{},
+      dataType:1,
+      active:2,
+      form:{},
       userInfo: {
         nickName: 'mpvue',
         avatarUrl: 'http://mpvue.com/assets/logo.png'
@@ -95,7 +98,161 @@ export default {
 
   components: {},
   methods: {
-  	makertap(){
+  	handleNav(index){
+  		
+  		if(this.active==index){
+  			return false;
+  		}else{
+  			this.active = index;
+							if(this.active==2){
+								this._findListMap(this.form);
+							}else if(this.active==3){
+								this._hotListMap(this.form);
+							}  			
+  		}
+  		 		
+  	},
+  	regionchange(e){
+  		let vm = this;
+					vm.MAP.getRegion({
+						success:function(res){
+							vm.form = {
+								minX:res.southwest.longitude, 
+								maxX:res.northeast.longitude,
+								minY:res.southwest.latitude,
+								maxY:res.northeast.latitude								
+							};
+							if(vm.active==2){
+								vm._findListMap(vm.form);
+							}else if(vm.active==3){
+								vm._hotListMap(vm.form);
+							}
+							
+							
+						},
+						fail:function(res){
+							
+						}
+						
+					})	
+  	},
+  	makertap(e){
+  			console.log(e);
+  	},
+  	
+  	_hotListMap(opt){
+  		
+  		
+  		hotListMap(opt).then((res)=>{
+  			let vm = this;
+  			vm.markers = [];
+				if(res.object.length > 0){
+					
+					res.object.forEach((item)=>{
+						
+							vm.markers.push(
+								
+			  					{
+										id:item.t.dynamicId,//	标记点id	Number	否	marker点击事件回调会返回此id。建议为每个marker设置上Number类型id，保证更新marker时有更好的性能。	
+										latitude:item.position.latitude,//	纬度	Number	是	浮点数，范围 -90 ~ 90	
+										longitude:item.position.longitude,//	经度	Number	是	浮点数，范围 -180 ~ 180	
+										title:'',	//标注点名	String	否		
+										zIndex:-1,//	显示层级	Number	否		2.3.0
+										iconPath:item.t.photoUrl,//	显示的图标	String	是	项目目录下的图片路径，支持相对路径写法，以'/'开头则表示相对小程序根目录；也支持临时路径和网络图片（2.3.0）	
+										rotate:0,//	旋转角度	Number	否	顺时针旋转的角度，范围 0 ~ 360，默认为 0	
+										alpha:1,//	标注的透明度	Number	否	默认1，无透明，范围 0 ~ 1	
+										width:'80rpx',//	标注图标宽度	Number / String	否	默认为图片实际宽度，单位px（2.4.0起支持rpx）	
+										height:'80rpx',//	标注图标高度	Number / String	否	默认为图片实际高度，单位px（2.4.0起支持rpx）
+			  						label:{
+											content:String(item.size),//	文本	String	1.2.0
+											color:'#fff',//	文本颜色	String	1.2.0
+											fontSize:12,//	文字大小	Number / String	1.2.0
+											borderRadius:'100px',//	边框圆角	Number / String	1.2.0
+											borderWidth:0,//	边框宽度	Number / String	2.3.0
+											borderColor:'#ff5b40',//	边框颜色	String	2.3.0
+											bgColor:'#ff5b40',//	背景色	String	1.2.0
+											anchorX:'20rpx',
+											anchorY:'-100rpx',
+											padding:5,//	文本边缘留白	Number / String	1.2.0
+											display:'ALWAYS',//	'BYCLICK':点击显示; 'ALWAYS':常显	String	1.2.0
+											textAlign:'center'//	文本对齐方式。有效值: left, right, center	String	  							
+			  						}
+			  						
+			  						
+			  					}								
+								
+								
+							)
+						
+					})
+					
+				}
+				
+  		}).catch((res)=>{
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	  				
+  		})  		
+  		
+  		
+  	},
+  	
+  	_findListMap(opt){
+  		
+  		findListMap(opt).then((res)=>{
+  			let vm = this;
+  			vm.markers = [];
+				if(res.object.length > 0){
+					
+					res.object.forEach((item)=>{
+						
+							vm.markers.push(
+								
+			  					{
+										id:item.t.dynamicId,//	标记点id	Number	否	marker点击事件回调会返回此id。建议为每个marker设置上Number类型id，保证更新marker时有更好的性能。	
+										latitude:item.position.latitude,//	纬度	Number	是	浮点数，范围 -90 ~ 90	
+										longitude:item.position.longitude,//	经度	Number	是	浮点数，范围 -180 ~ 180	
+										title:'',	//标注点名	String	否		
+										zIndex:-1,//	显示层级	Number	否		2.3.0
+										iconPath:item.t.photoUrl,//	显示的图标	String	是	项目目录下的图片路径，支持相对路径写法，以'/'开头则表示相对小程序根目录；也支持临时路径和网络图片（2.3.0）	
+										rotate:0,//	旋转角度	Number	否	顺时针旋转的角度，范围 0 ~ 360，默认为 0	
+										alpha:1,//	标注的透明度	Number	否	默认1，无透明，范围 0 ~ 1	
+										width:'80rpx',//	标注图标宽度	Number / String	否	默认为图片实际宽度，单位px（2.4.0起支持rpx）	
+										height:'80rpx',//	标注图标高度	Number / String	否	默认为图片实际高度，单位px（2.4.0起支持rpx）
+			  						label:{
+											content:String(item.size),//	文本	String	1.2.0
+											color:'#fff',//	文本颜色	String	1.2.0
+											fontSize:12,//	文字大小	Number / String	1.2.0
+											borderRadius:'100px',//	边框圆角	Number / String	1.2.0
+											borderWidth:0,//	边框宽度	Number / String	2.3.0
+											borderColor:'#ff5b40',//	边框颜色	String	2.3.0
+											bgColor:'#ff5b40',//	背景色	String	1.2.0
+											anchorX:'20rpx',
+											anchorY:'-100rpx',
+											padding:5,//	文本边缘留白	Number / String	1.2.0
+											display:'ALWAYS',//	'BYCLICK':点击显示; 'ALWAYS':常显	String	1.2.0
+											textAlign:'center'//	文本对齐方式。有效值: left, right, center	String	  							
+			  						}
+			  						
+			  						
+			  					}								
+								
+								
+							)
+						
+					})
+					
+				}
+				
+  		}).catch((res)=>{
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	  				
+  		})
   		
   	},
     bindViewTap () {
@@ -112,43 +269,30 @@ export default {
     },
     initMap(){
     	let vm = this;
-    	console.log(123);
 	   	wx.getLocation({
 	  		success:function(res){
 	  			vm.latitude = res.latitude;
 	  			vm.longitude = res.longitude;
-	  			vm.markers = [
-	  					{
-								id:'456',//	标记点id	Number	否	marker点击事件回调会返回此id。建议为每个marker设置上Number类型id，保证更新marker时有更好的性能。	
-								latitude:res.latitude,//	纬度	Number	是	浮点数，范围 -90 ~ 90	
-								longitude:res.longitude,//	经度	Number	是	浮点数，范围 -180 ~ 180	
-								title:'',	//标注点名	String	否		
-								zIndex:-1,//	显示层级	Number	否		2.3.0
-								iconPath:'../../static/images/img1.png',//	显示的图标	String	是	项目目录下的图片路径，支持相对路径写法，以'/'开头则表示相对小程序根目录；也支持临时路径和网络图片（2.3.0）	
-								rotate:0,//	旋转角度	Number	否	顺时针旋转的角度，范围 0 ~ 360，默认为 0	
-								alpha:1,//	标注的透明度	Number	否	默认1，无透明，范围 0 ~ 1	
-								width:'80rpx',//	标注图标宽度	Number / String	否	默认为图片实际宽度，单位px（2.4.0起支持rpx）	
-								height:'80rpx',//	标注图标高度	Number / String	否	默认为图片实际高度，单位px（2.4.0起支持rpx）
-	  						label:{
-									content:'50',//	文本	String	1.2.0
-									color:'#fff',//	文本颜色	String	1.2.0
-									fontSize:12,//	文字大小	Number / String	1.2.0
-									borderRadius:'100px',//	边框圆角	Number / String	1.2.0
-									borderWidth:'2px',//	边框宽度	Number / String	2.3.0
-									borderColor:'#ff5b40',//	边框颜色	String	2.3.0
-									bgColor:'#ff5b40',//	背景色	String	1.2.0
-									anchorX:'20rpx',
-									anchorY:'-100rpx',
-									padding:2,//	文本边缘留白	Number / String	1.2.0
-									display:'ALWAYS',//	'BYCLICK':点击显示; 'ALWAYS':常显	String	1.2.0
-									textAlign:'center'//	文本对齐方式。有效值: left, right, center	String	  							
-	  						}
-	  						
-	  						
-	  					}
-	  			]
 	  			
+//					vm.MAP.getRegion({
+//						success:function(res){
+//							let opt = {
+//								minX:res.southwest.longitude, 
+//								maxX:res.northeast.longitude,
+//								minY:res.southwest.latitude,
+//								maxY:res.northeast.latitude
+//							}
+//							vm._findListMap(opt);
+//							
+//							
+//						},
+//						fail:function(res){
+//							
+//						}
+//						
+//					})	  			
 	  			
+
 	  		},
 	  		fail:function(){
 	  			
@@ -159,7 +303,9 @@ export default {
   },
 
   onLoad () {
-
+  	let vm = this;
+		this.MAP =  wx.createMapContext('map');
+		
   	this.initMap();
   	
   	
@@ -174,7 +320,7 @@ export default {
 			height: auto;
 			width: 100%;
 			min-height: 100vh;
-			background: #f1f1f1;
+			background: #fff;
 		}
 
 	.header{
@@ -209,17 +355,34 @@ export default {
 			}
 			
 			.nav-item{
+				position: relative;
 				flex: 1.5;
 				text-align: center;
 				line-height: 36px;
 				font-size: 14px;
 				color: #333;
+				&.active{
+					color: #FF5B40;
+				}
+				&.active::after{
+					position: absolute;
+					content: '';
+					height: 2px;
+					width: 40px;
+					bottom: 5px;
+					background: #FF5B40;
+					left: 50%;
+					margin-left: -20px;
+				}
+				
 			}
+			
 			
 		}
 		
 	}
 	.content{
+		background: #f1f1f1;
 		padding: 10px;
 		padding-top: 36px;
 		box-sizing: border-box;
@@ -297,9 +460,10 @@ export default {
 	padding-top: 36px;
 	height: 100%;
 	width: 100%;
+	background: #fff;
 }
 .map{
-	height: 100vh;
+	height: 93vh;
 	width: 100%;
 }	
 	

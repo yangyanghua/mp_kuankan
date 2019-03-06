@@ -1,11 +1,13 @@
 {
   "pages": [
+  	"pages/index/main",
+  	"pages/editDetail/main",
+  	"pages/userInfo/main",
+  	"pages/myZoe/main",  
   	"pages/detail/main",
-  	"pages/seting/main",
-  	"pages/myZoe/main",
+  	"pages/seting/main",	
   	"pages/message/main",
-  	"pages/fans/main",
-    "pages/index/main" 
+  	"pages/fans/main"
     
   ],
   "window": {
