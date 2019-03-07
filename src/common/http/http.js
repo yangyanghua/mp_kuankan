@@ -21,11 +21,19 @@ const requstPost = function(url, data, header) {
 
 //封装Request请求方法  
 
+
 function requst(url, method, data = {}, header = 'application/x-www-form-urlencoded;charset=UTF-8;') {
 	wx.showNavigationBarLoading();
     
 	return new Promise((resove, reject) => {
 
+		var userInfo = wx.getStorageSync('userInfo') || false;
+		var user = {};
+		if(userInfo) {
+			user = JSON.parse(userInfo);
+			data.accessToken = user.accessToken ||'';				
+		}
+		
 		//获取当前路由
 //		data.method = method
 		wx.request({
@@ -37,16 +45,13 @@ function requst(url, method, data = {}, header = 'application/x-www-form-urlenco
 			method: method.toUpperCase(), // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
 			success: function(res) {
 				wx.hideNavigationBarLoading();
-					if(res){
+					if(res.data){
 						resove(res.data)
 					}else{
-						let err = {
-							code: -1,
-							message: '网络或系统错误'
-						}							
-						reject(err)
+						
+						resove([])
+						
 					}
-				
 			},
 			fail: function(msg) {
 				wx.hideNavigationBarLoading()

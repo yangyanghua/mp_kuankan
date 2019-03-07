@@ -1,6 +1,7 @@
 {
   "pages": [
   	"pages/index/main",
+  	"pages/login/main",	
   	"pages/editDetail/main",
   	"pages/userInfo/main",
   	"pages/myZoe/main",  
