@@ -175,7 +175,8 @@
 
 		},
 		methods: {
-			changeType(type){		
+			changeType(type){	
+				let vm = this;
 				this.dataType = type;		
 				if(type==1){
 							this.form1.readCount = '';	
