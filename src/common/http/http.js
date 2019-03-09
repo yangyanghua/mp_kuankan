@@ -31,7 +31,8 @@ function requst(url, method, data = {}, header = 'application/x-www-form-urlenco
 		var user = {};
 		if(userInfo) {
 			user = JSON.parse(userInfo);
-			data.accessToken = user.accessToken ||'';				
+			data.accessToken = user.accessToken ||'';
+			data.userId  = user.id;	
 		}
 		
 		//获取当前路由

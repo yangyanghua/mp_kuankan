@@ -19,6 +19,7 @@ export const	getweixinToken   =    '/api/v1/weixin/accesstoken' //获取微信to
 export const	getweixinUserinfo=    '/api/v1/weixin/userinfo' //获取微信token
 export const    readRank         =    '/api/v2/dynamic/read/rank' //阅读榜
 export const    fansList         =    '/api/v1/friend/fans/list' //用户粉丝列表
+export const    followFansList   =    '/api/v1/friend/follow/list' //我关注的用户列表
 export const    dynamicPhotoCount=    '/api/v1/dynamic/dynamicPhotoCount' //用户图
 export const    dynamicList      =    '/api/v2/dynamic/map/user/list' //用户图片
 export const	score            =    '/api/v2/dynamic/score' //用户评分
@@ -39,7 +40,7 @@ export const    findListMap      =    '/api/v1/dynamic/map/polymeric/list' //首
 export const    hotList          =    '/api/v2/dynamic/hot/list' //首页-热门列表
 export const    hotListMap       =    '/api/v1/dynamic/map/hot/polymeric/list' //首页-热门列表地图模式
 
-
+export const    messageCenter       =    '/api/v1/user/message/center' //消息中心
 
 
 

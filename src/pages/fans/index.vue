@@ -6,8 +6,8 @@
 			<li class="left-btn">
 				<image class="icon_search" src="../../static/images/icon_search.png"/>
 			</li>
-			<li class="nav-item">我关注的</li>
-			<li class="nav-item">关注我的</li>
+			<li class="nav-item" v-bind:class="{'active':active == 1}" @tap="handleNav(1)" >我关注的({{meFollow}})</li>
+			<li class="nav-item" v-bind:class="{'active':active == 2}" @tap="handleNav(2)" >关注我的({{followMe}})</li>
 			<li class="right-btn">
 					<image class="icon_right" src="../../static/images/icon_addfriend.png"/>
 			</li>
@@ -19,36 +19,16 @@
 
 			<div class="fans" >
 				<ul class="fansList">
-					<li class="fansItem">
-						<div class="fansImage"><image class="user-img" src="../../static/images/user.png"/></div>
+					<li class="fansItem" v-for="(item,index) in data" :key="index" >
+						<div class="fansImage"><image class="user-img" :src="item.avatar"/></div>
 						<div class="fansInfo">
-							<p class="fansName">item.nickName</p>
-							<p>快看ID：item.no</p>
-							<p>上次登录：2018-12-10 18:00</p>
+							<p class="fansName">{{item.nickName}}</p>
+							<p class="userNo" >快看ID：{{item.no}}</p>
 						</div>
-						<button class="foll-btn btnA"  ><image class="icon" src="../../static/images/icon_guanzhu.png"/>相互关注</button>
+						<button class="foll-btn btnA" v-if="item.userFollowState=='two'" @tap="_cancleFriend(item.id)"  hover-class="active"  ><image class="icon" src="../../static/images/icon_guanzhu.png"/>相互关注</button>
+						<button class="foll-btn btnA" v-if="item.userFollowState=='to'" @tap="_cancleFriend(item.id)" hover-class="active"  ><image class="icon" src="../../static/images/gou.png"/>已关注</button>
+						<button class="foll-btn btnB" v-if="item.userFollowState=='from'" @tap="_addFriend(item.id)"    hover-class="active" ><image class="icon" src="../../static/images/jia.png"/>关注</button>
 					</li>		
-					
-					<li class="fansItem">
-						<div class="fansImage"><image class="user-img" src="../../static/images/user.png"/></div>
-						<div class="fansInfo">
-							<p class="fansName">item.nickName</p>
-							<p>快看ID：item.no</p>
-							<p>上次登录：2018-12-10 18:00</p>
-						</div>
-						<button class="foll-btn"  >关注</button>
-					</li>	
-
-					<li class="fansItem">
-						<div class="fansImage"><image class="user-img" src="../../static/images/user.png"/></div>
-						<div class="fansInfo">
-							<p class="fansName">item.nickName</p>
-							<p>快看ID：item.no</p>
-							<p>上次登录：2018-12-10 18:00</p>
-						</div>
-						<button class="foll-btn btnA"  >已关注</button>
-					</li>	
-					
 				</ul>
 			</div>	
 
@@ -60,26 +40,144 @@
 </template>
 
 <script>
-import card from '@/components/card'
+
+import {fansList, followFansList, addFriend, cancleFriend} from './srevice.js'
+
 
 export default {
-  components: {
-    card
-  },
 
   data () {
     return {
-      logs: [],
-      imgUrls: [
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/newsPicture/05558951-de60-49fb-b674-dd906c8897a6',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/coursePicture/0fbcfdf7-0040-4692-8f84-78bb21f3395d',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/management-school-picture/7683b32e-4e44-4b2f-9c03-c21f34320870'
-      ]
+			data:[],
+			followMe:0,
+			meFollow:0,
+			active:2,
     }
   },
+		onPullDownRefresh() {
+			if(this.active == 1) {
+					this._followFansList();
+			} else {
+					this._fansList();
+			}
 
-  created () {
-  }
+		},  
+  onLoad(){
+  	
+  	this._fansList();
+  	this._followFansList();
+  	
+  },
+	methods:{
+		
+		
+		handleNav(index){
+			if(this.active==index){
+				return false;
+			}else{
+				this.active = index
+				if(index == 1) {
+						this._followFansList();
+				} else {
+						this._fansList();
+				}				
+			}
+
+		},
+		_cancleFriend(id){
+
+			cancleFriend({followedUserId:id}).then((res)=>{
+
+					wx.showToast({
+						title: '取消关注成功',
+						icon: 'none',
+						duration: 2000
+					})	
+
+						this._followFansList();
+						this._fansList();
+			}).catch((res)=>{
+
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+				
+			})
+
+		},
+		_addFriend(id){
+			
+			addFriend({applicantUserid:id}).then((res)=>{
+
+					wx.showToast({
+						title: '关注成功',
+						icon: 'none',
+						duration: 2000
+					})	
+						this._followFansList();
+						this._fansList();
+			}).catch((res)=>{
+
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+				
+			})
+			
+		},
+		_followFansList(){
+				wx.showLoading({
+					title: '加载中',
+				})			
+			followFansList().then((res)=>{
+				if(this.active==1){
+					this.data = res;
+				}
+				this.meFollow = res.length;  
+				wx.hideLoading();
+				wx.stopPullDownRefresh();
+			}).catch((res)=>{
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})				
+			})			
+			
+			
+			
+		},
+		_fansList(){
+				wx.showLoading({
+					title: '加载中',
+				})			
+			fansList().then((res)=>{
+					
+				if(this.active==2){
+					this.data = res;
+				}
+				this.followMe = res.length;  
+				wx.hideLoading();
+				wx.stopPullDownRefresh();
+			}).catch((res)=>{
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})				
+			})
+			
+		}
+	}
+
 }
 </script>
 
@@ -126,11 +224,25 @@ export default {
 			}
 			
 			.nav-item{
+				position: relative;
 				flex: 4;
 				text-align: center;
 				line-height: 36px;
 				font-size: 14px;
 				color: #333;
+				&.active {
+					color: #FF5B40;
+				}
+				&.active::after {
+					position: absolute;
+					content: '';
+					height: 2px;
+					width: 70px;
+					bottom: 5px;
+					background: #FF5B40;
+					left: 50%;
+					margin-left: -35px;
+				}				
 			}
 			
 		}
@@ -148,18 +260,20 @@ export default {
 .fansList .fansItem{
 	position: relative;
 	display: flex;
-	height: 80px;
+	height: 70px;
 	background: #FFFFFF;
 	padding: 10px;
+	box-sizing: border-box;
 	margin-bottom: 10px;
 }
 .fansList .fansItem .fansImage{
-	flex: 0 0 70px;
+	flex: 0 0 50px;
 }
 .fansList .fansItem .fansImage .user-img{
-	display: block;
-	height: 50px;
-	width: 50px;
+	float: left;
+	margin-top: 5px;
+	height: 40px;
+	width: 40px;
 	border:3px solid #FFFFFF;
 	border-radius:100px;
 	background-size:cover;
@@ -171,21 +285,28 @@ export default {
 	box-sizing: border-box;
 	padding-left: 10px;
 }
-.fansList .fansItem .fansInfo p{
-	height: 20px;
-	line-height: 20px;
-	font-size: 12px;
-	color: #666666;
-}
-.fansList .fansItem .fansInfo p.fansName{
-	height: 20px;
-	line-height: 20px;
+
+.fansList .fansItem .fansInfo .fansName{
+	height: 30px;
+	line-height: 40px;
 	font-weight: bold;
+	font-size: 12px;
 	color: #333333;
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+
+.fansList .fansItem .fansInfo .userNo{
+	
+	height: 30px;
+	line-height: 20px;
+	font-size: 12px;
+	color: #333333;
+	width: 100%;	
+	
 }
 
  .foll-btn{
@@ -205,6 +326,10 @@ export default {
 	&.btnA{
 		color: #ff5b40;
 		background: #fcf0f3;
+	}
+	&.btnB{
+		color: #fff;
+		background: #ff5b40;
 	}
 }
  .foll-btn .icon{

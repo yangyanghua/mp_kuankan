@@ -6,32 +6,39 @@
 			<li class="left-btn">
 				<image class="icon_search" src="../../static/images/iconset.png"/>
 			</li>
-			<li class="nav-item">ID:954710</li>	
+			<li class="nav-item">ID:{{userDetail.no}}</li>	
 			<li class="right-btn">
 					<image class="icon_right" src="../../static/images/icon_map.png"/>
 					<image class="icon_right share" src="../../static/images/icon_share.png"/>
 			</li>
 		</ul>		
 	</div>
- 
+
+<scroll-view  scroll-y>
 			<div class="header">
 				<div class="headerBg">
 					
-					<image class="bg-image" src="../../static/images/bg_personal2.png"/>
+					<image class="bg-image" v-if="!userDetail.background" src="../../static/images/bg_personal2.png"/>
+					<image class="bg-image" v-if="userDetail.background" :src="userDetail.background"/>
+
 					
 				</div>
 				<div class="userInfo">
 				<div class="baseInfo">
 						<div class="userImg">
-							<image class="user-img" src="../../static/images/user.png"/>
-
+							<image class="user-img" v-if="!userDetail.avatar" src="../../static/images/shouq/photo_logo2.png"/>
+							<image class="user-img" v-if="userDetail.avatar" :src="userDetail.avatar"/>
 						</div>
 						<div class="userName">
-							<p class="name">用户名称
-								
-								<image class="sex-img" mode="aspectFit" src="../../static/images/icon_boy.png"/>
+							<p class="name">{{userDetail.nickName}}
+								<image class="sex-img" mode="aspectFit" v-if="userDetail.genderType=='male'" src="../../static/images/icon_boy.png"/>
+								<image class="sex-img" mode="aspectFit" v-if="userDetail.genderType=='female'" src="../../static/images/icon_girl.png"/>
 							</p>
-							<p class="lv"><image class="lv-img" mode="aspectFit" src="../../static/images/btnphontoer12x.png"/></p>
+							<p class="lv">
+								<image class="lv-img" mode="aspectFit" v-if="userDetail.level=='freshman' || userDetail.level=='junior'" src="../../static/images/btnphontoer12x.png"/>
+								<image class="lv-img" mode="aspectFit" v-if="userDetail.level=='medium'" src="../../static/images/btn_phontoer2x.png"/>
+								<image class="lv-img" mode="aspectFit" v-if="userDetail.level=='senior'||userDetail.level=='highest'" src="../../static/images/btn_phontoer3x.png"/>
+							</p>
 						</div>
 						
 						<div class="right-box">
@@ -39,74 +46,81 @@
 						</div>
 						
 					</div>
-					<p class="introduce">但是这个属性只支持单行文本的溢出显示省略号，如果我们要实现多行文本溢出显示省略号呢。接下来重点说一说多行文本溢出显示省略号，如下。</p>
+					<p class="introduce">{{userDetail.summary}}</p>
 					<ul class="navList">
-						<li class="navItem active">
-							<p>123</p>
-							<p>足迹</p>
+						<li class="navItem" v-bind:class="{'active':active==1}" @tap="handelNav(1)" >
+							<p class="txt-box" >{{userDetail.dynamicCount}}</p>
+							<p class="txt-box" >足迹</p>
 						</li>
-						<li class="navItem">
-							<p>123</p>
-							<p>城市</p>
+						<li class="navItem" v-bind:class="{'active':active==2}" @tap="handelNav(2)" >
+							<p class="txt-box" >{{userDetail.cityCount}}</p>
+							<p class="txt-box" >城市</p>
 						</li>
-						<li class="navItem">
-							<p>123</p>
-							<p>国家</p>						
+						<li class="navItem" v-bind:class="{'active':active==3}" @tap="handelNav(3)" >
+							<p class="txt-box" >{{userDetail.countryCount}}</p>
+							<p class="txt-box" >国家</p>						
 						</li>
-						<li class="navItem">
-							<p>123</p>
-							<p>收藏</p>						
+						<li class="navItem" v-bind:class="{'active':active==4}" @tap="handelNav(4)" >
+							<p class="txt-box" >{{userDetail.collectCount}}</p>
+							<p class="txt-box" >收藏</p>						
 						</li>
-						<li class="navItem">
-							<p>123</p>
-							<p>地点</p>							
+						<li class="navItem" v-bind:class="{'active':active==5}" @tap="handelNav(5)" >
+							<p class="txt-box" >{{userDetail.locationCount}}</p>
+							<p class="txt-box" >地点</p>							
 						</li>
 					</ul>	
 	
 				</div>
 			</div>
-			
-			
-<div class="content">
-		
-		<ul class="data-list list-left">
-			<li class="data-item">
-				<image class="data-img" mode="widthFix" src="../../static/images/img1.jpg"/>
-				<p class="data-title">标题标题表提标题提tit提提</p>	
-				<div class="user-info">
-					<div class="user-image">
-						<image class="user-img" src="../../static/images/user.png"/>
-					</div>
-					<div class="info-txt">
-						<p class="name">张三李四</p>
-						<p class="creatTime">2018-10-10 12:30</p>
-					</div>		
-				</div>
-			</li>
-		</ul>
-		
-		<ul class="data-list list-right">
-			<li class="data-item">
-				<image class="data-img" mode="widthFix" src="../../static/images/bg_personal2.png"/>
-				<p class="data-title">标题标题表提标题提tit提提</p>	
-				<div class="user-info">
-					<div class="user-image">
-						<image class="user-img" src="../../static/images/user.png"/>
-					</div>
-					<div class="info-txt">
-						<p class="name">张三李四</p>
-						<p class="creatTime">2018-10-10 12:30</p>
-					</div>		
-				</div>
-			</li>
-		</ul>	
 
-
-
-	</div>	
+	
+			<div class="content">
+			
+					<ul class="data-list list-left">
+						<li class="data-item" v-for="(item,index) in data1" :key="index" >
+							<image class="data-img" mode="widthFix" :src="item.firstUrl"/>
+							<p class="data-title">{{item.content}}</p>	
+							<div class="user-info">
+								<div class="user-image">
+									<image class="user-img" v-if="!userDetail.avatar" src="../../static/images/shouq/photo_logo2.png"/>
+									<image class="user-img" v-if="userDetail.avatar" :src="userDetail.avatar"/>									
+								</div>
+								<div class="info-txt">
+									<p class="name">{{userDetail.nickName}}</p>
+									<p class="creatTime" v-if="item.updateTime1" >{{item.updateTime1}}</p>
+									<p class="creatTime" v-if="item.startTime1" ><span class="label-txt" >From：</span>{{item.startTime1}}</p>
+									<p class="creatTime" v-if="item.endTime1" ><span class="label-txt" >To：</span>{{item.endTime1}}</p>
+								</div>		
+							</div>
+						</li>
+					</ul>
+					
+					<ul class="data-list list-right">
+						<li class="data-item" v-for="(item,index) in data2" :key="index" >
+							<image class="data-img" mode="widthFix" :src="item.firstUrl"/>
+							<p class="data-title">{{item.content}}</p>	
+							<div class="user-info">
+								<div class="user-image">
+									<image class="user-img" v-if="!userDetail.avatar" src="../../static/images/shouq/photo_logo2.png"/>
+									<image class="user-img" v-if="userDetail.avatar" :src="userDetail.avatar"/>									
+								</div>
+								<div class="info-txt">
+									<p class="name">{{userDetail.nickName}}</p>
+									<p class="creatTime" v-if="item.updateTime1" >{{item.updateTime1}}</p>
+									<p class="creatTime" v-if="item.startTime1" ><span class="label-txt" >From：</span>{{item.startTime1}}</p>
+									<p class="creatTime" v-if="item.endTime1" ><span class="label-txt" >To：</span>{{item.endTime1}}</p>
+									
+								</div>		
+							</div>
+						</li>
+					</ul>	
 			
 			
 			
+				</div>	
+			
+			
+</scroll-view>			
 			
 			
 			
@@ -115,26 +129,207 @@
 </template>
 
 <script>
-import card from '@/components/card'
 
+import {getUserDetail, getDynamicList, cityList,countryList} from './srevice.js';
+import { formatTime } from '@/utils/index.js';
 export default {
-  components: {
-    card
-  },
 
   data () {
     return {
-      logs: [],
-      imgUrls: [
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/newsPicture/05558951-de60-49fb-b674-dd906c8897a6',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/coursePicture/0fbcfdf7-0040-4692-8f84-78bb21f3395d',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/management-school-picture/7683b32e-4e44-4b2f-9c03-c21f34320870'
-      ]
+    		active:1,
+    		data1:[],
+    		data2:[],
+    		isEmpty:false,
+				userInfo:{},
+				nomore:false,
+				userDetail:{},
+				form:{
+					dynamicId:'',
+					isLeast:true
+				}
     }
   },
 
-  created () {
-  }
+  onLoad(){
+  	this.userInfo = mpvue.getStorageSync('userInfo')|| ''
+  	if(this.userInfo){
+  		
+  		this.userInfo = JSON.parse(this.userInfo);
+  		this._getUserDetail(this.userInfo.id);
+  		this._getDynamicList(this.form,true);
+  		
+  	}
+  	
+  },
+		onPullDownRefresh() {
+
+	
+		},
+		onReachBottom() {
+			if(!this.nomore){
+				if(this.active == 1){
+					this._getDynamicList(this.form,false);
+				}else if(this.active == 2) {
+
+				} else if(this.active == 3) {
+
+				}
+			
+			}else{
+					wx.showToast({
+						title: '没有更多数据啦',
+						icon: 'none',
+						duration: 2000
+					})				
+			}		
+			
+
+		},  
+	methods:{
+		handelNav(index){
+			
+			if(this.active != index){
+				this.form.dynamicId = '';
+				this.active = index;
+				if(index === 1){
+						this._getDynamicList(this.form,true);	
+				}else if(index === 2){
+					
+					this._cityList(this.form,true);	
+					
+				}
+				
+			}
+			
+		},
+		_getUserDetail(id){
+			
+			getUserDetail({toUid:id}).then((res)=>{
+				
+				this.userDetail = res;
+				
+			}).catch((res)=>{
+				
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})								
+			})
+			
+		},
+
+
+
+		_cityList(opt,empty){
+			
+			let vm = this;
+				wx.showLoading({
+					title: '加载中',
+				})
+				
+			cityList(opt).then((res)=>{
+					if(empty){
+						vm.data2 = [];
+						vm.data1 = [];
+					};
+
+							if(res.length>0){
+								vm.nomore = false
+							}else{
+								vm.nomore = true;			
+							}
+
+					res.forEach((item,index)=>{
+								item.startTime1 =  formatTime(new Date(item.startTime));
+								item.endTime1 =  formatTime(new Date(item.endTime));
+								item.startTime1 =  item.startTime1.split(' ')[0];
+								item.endTime1 =  item.endTime1.split(' ')[0];								
+								
+								item.firstUrl = item.url
+								if(Math.ceil(index % 2) == 0) {
+									vm.data1.push(item)
+								} else {
+									vm.data2.push(item)
+								}										
+
+					})
+					if(vm.data2.length==0&&vm.data2.length==0){
+						vm.isEmpty = true;
+					}
+					wx.hideLoading();
+					wx.stopPullDownRefresh();				
+			}).catch((res)=>{
+
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+
+			})
+			
+		},
+		_getDynamicList(opt,empty){
+			let vm = this;
+				wx.showLoading({
+					title: '加载中',
+				})
+				
+			getDynamicList(opt).then((res)=>{
+					if(empty){
+						vm.data2 = [];
+						vm.data1 = [];
+					};
+
+							if(res.object.length>0){
+								var obj =  res.object[res.object.length-1];
+								if(obj.dynamics.length > 0){
+									vm.form.dynamicId = obj.dynamics[obj.dynamics.length-1].id;
+									vm.nomore = false
+								}else if(res.object[0].dynamics.length == 0){				
+									vm.nomore = true;			
+								};				
+							}else{
+								vm.nomore = true;			
+							}
+
+					
+					res.object.forEach((item)=>{
+							item.dynamics.forEach((item1,index)=>{
+								item1.updateTime1 =  formatTime(new Date(item1.updateTime));
+								if(Math.ceil(index % 2) == 0) {
+									vm.data1.push(item1)
+								} else {
+									vm.data2.push(item1)
+								}										
+							})
+					})
+					if(vm.data2.length==0&&vm.data2.length==0){
+						vm.isEmpty = true;
+					}
+					wx.hideLoading();
+					wx.stopPullDownRefresh();				
+			}).catch((res)=>{
+
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+
+			})
+			
+			
+		},
+		
+		
+		
+	}
 }
 </script>
 
@@ -297,13 +492,14 @@ export default {
 }
 
 .header .userInfo .baseInfo .userImg{
-	flex: 0 0 1.3rem;
+	flex: 0 0 60px;
 	text-align: center;
 } 
 .header .userInfo .baseInfo .userImg .user-img{
-	display: block;
-	height: 1.3rem;
-	width: 1.3rem;
+	float: left;
+	margin-top: 10px;
+	height: 50px;
+	width: 50px;
 	border-radius:100px;
 }
 .header .userInfo .baseInfo .userName{
@@ -352,37 +548,40 @@ export default {
 }
 .header .navList{
 	display: flex;
-	height: 1.2rem;
+	height: 60px;
 	text-align: center;
 }
 .header .navList .navItem{
 	flex: 1;
+	box-sizing: border-box;
 	position: relative;
+	padding-top: 10px;
 }
-.header .navList .navItem p{
+.header .navList .navItem .txt-box{
 	color: #333333;
-	height: 0.6rem;
-	line-height: 0.6rem;
+	height: 20px;
+	line-height: 20px;
 	font-weight: bold;
 	font-size: 12px;
 }
-.header .navList .navItem.active p{
+.header .navList .navItem.active .txt-box{
 	color: #FF5B40;
 }
 .header .navList .navItem.active::before{
 	content: '';
 	height: 2px;
-	width: 1rem;
+	width: 40px;
 	position: absolute;
-	bottom: -0.05rem;
+	bottom: 8px;
 	left: 50%;
-	margin-left: -0.5rem;
+	margin-left: -20px;
 	background: #FF5B40;
 }
 
 
 	.content{
 		padding: 8px;
+		padding-top:0;
 		box-sizing: border-box;
 		height: auto;
 		display: flex;
@@ -448,6 +647,11 @@ export default {
 						margin-top: 3px;
 						font-size: 10px;
 						color: #999;
+						.label-txt{
+							display: inline-block;
+							width: 36px;
+							text-align: right;
+						}
 					}
 				}
 			}

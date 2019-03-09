@@ -1,15 +1,15 @@
 {
   "pages": [
+  	"pages/myZoe/main",  
+  	"pages/message/main",
+  	"pages/fans/main",
   	"pages/index/main",
   	"pages/login/main",	
   	"pages/editDetail/main",
-  	"pages/userInfo/main",
-  	"pages/myZoe/main",  
+  	"pages/userInfo/main",	
   	"pages/detail/main",
-  	"pages/seting/main",	
-  	"pages/message/main",
-  	"pages/fans/main"
-    
+  	"pages/seting/main"
+  	
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -29,25 +29,21 @@
     "borderStyle": "white",
 
     "list": [{
-      "text": "",
       "pagePath": "pages/index/main",
       "iconPath": "static/images/tabar/icon_home.png",
       "selectedIconPath": "static/images/tabar/icon_home_press.png"
     },
      {
-      "text": "",
       "pagePath": "pages/fans/main",
       "iconPath": "static/images/tabar/icon_friend.png",
       "selectedIconPath": "static/images/tabar/icon_friend_press.png"
     },
      {
-      "text": "",
       "pagePath": "pages/message/main",
       "iconPath": "static/images/tabar/icon_talk.png",
       "selectedIconPath": "static/images/tabar/icon_talk_press.png"
     },    
      {
-      "text": "",
       "pagePath": "pages/myZoe/main",
       "iconPath": "static/images/tabar/icon_personal.png",
       "selectedIconPath": "static/images/tabar/icon_personal_press.png"
