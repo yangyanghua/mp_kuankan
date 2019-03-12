@@ -129,6 +129,7 @@
 			}
 		},
 		onPullDownRefresh() {
+			let vm = this;
 			if(this.dataType == 1) {
 							this.form1.readCount = '';	
 							this.form1.updateTime = '';

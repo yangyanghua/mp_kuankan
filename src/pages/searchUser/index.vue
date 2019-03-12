@@ -3,14 +3,14 @@
 
 	<div class="header">
 		<ul class="nav-list">
-			<li class="left-btn">
-				<image class="icon_search" @tap="linkTo('../searchUser/main?type=1')" src="../../static/images/icon_search.png"/>
+			<li class="nav-item">
+				<image class="search-img" src="../../static/images/icon_search_small.png"/>
+				<input type="text" class="inputKey"  auto-focus v-model="form.key" @confirm="onsubmit" confirm-type="search"  placeholder="请输入好友昵称"  />
+			
 			</li>
-			<li class="nav-item" v-bind:class="{'active':active == 1}" @tap="handleNav(1)" >我关注的({{meFollow}})</li>
-			<li class="nav-item" v-bind:class="{'active':active == 2}" @tap="handleNav(2)" >关注我的({{followMe}})</li>
-			<li class="right-btn">
-					<image class="icon_right"  @tap="linkTo('../searchUser/main?type=2')" src="../../static/images/icon_addfriend.png"/>
-			</li>
+			<li class="nav-btn">
+					<button class="btn-colse"hover-class="active" @tap="handleBrack"  >取&nbsp;&nbsp;消</button>
+			</li>			
 		</ul>		
 	</div>
 	
@@ -27,7 +27,8 @@
 						</div>
 						<button class="foll-btn btnA" v-if="item.userFollowState=='two'" @tap="_cancleFriend(item.id)"  hover-class="active"  ><image class="icon" src="../../static/images/icon_guanzhu.png"/>相互关注</button>
 						<button class="foll-btn btnA" v-if="item.userFollowState=='to'" @tap="_cancleFriend(item.id)" hover-class="active"  ><image class="icon" src="../../static/images/gou.png"/>已关注</button>
-						<button class="foll-btn btnB" v-if="item.userFollowState=='from'" @tap="_addFriend(item.id)"    hover-class="active" ><image class="icon" src="../../static/images/jia.png"/>关注</button>
+						<button class="foll-btn btnB" v-if="item.userFollowState=='from'||item.userFollowState=='none'" @tap="_addFriend(item.id)"    hover-class="active" ><image class="icon" src="../../static/images/jia.png"/>关注</button>
+
 					</li>		
 				</ul>
 			</div>	
@@ -41,7 +42,7 @@
 
 <script>
 
-import {fansList, followFansList, addFriend, cancleFriend} from './srevice.js'
+import {searchUser, searchFriend,addFriend,cancleFriend} from './srevice.js'
 
 
 export default {
@@ -49,45 +50,81 @@ export default {
   data () {
     return {
 			data:[],
-			followMe:0,
-			meFollow:0,
-			active:2,
+			type:1,
+			form:{
+				key:'',
+			}
     }
   },
 		onPullDownRefresh() {
-			if(this.active == 1) {
-					this._followFansList();
-			} else {
-					this._fansList();
-			}
+			
+			this.onsubmit();
 
-		},  
-  onLoad(){
+		}, 
+	onShow(){
+		this.data = [];
+		this.form.key = '';
+	},
+  onLoad(option){
   	
-  	this._fansList();
-  	this._followFansList();
+		this.type = option.type
+		
   	
   },
 	methods:{
-		linkTo(path){
+		onsubmit(){
 			
-							wx.navigateTo({
-								url: path
-							})			
+				if(!this.form.key) {
+					wx.showToast({
+						title: '请输入关键字',
+						icon: 'none',
+					});
+					return false;
+				};
+				wx.showLoading({
+					title: '加载中',
+				})					
+				if(this.type==1){
+
+					this._searchFriend();
+					
+				}else{
+					this._searchUser();
+				}
+				
+			
 			
 		},
-		handleNav(index){
-			if(this.active==index){
-				return false;
-			}else{
-				this.active = index
-				if(index == 1) {
-						this._followFansList();
-				} else {
-						this._fansList();
-				}				
-			}
-
+		_searchUser(){
+				searchUser(this.form).then((res)=>{
+				this.data = res;
+				wx.hideLoading();
+				wx.stopPullDownRefresh();					
+				}).catch((res)=>{
+				wx.hideLoading();
+				wx.stopPullDownRefresh();					
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+					});					
+					
+				})			
+		},
+		_searchFriend(){
+			
+				searchFriend(this.form).then((res)=>{
+				this.data = res;
+				wx.hideLoading();
+				wx.stopPullDownRefresh();					
+				}).catch((res)=>{
+				wx.hideLoading();
+				wx.stopPullDownRefresh();					
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+					});					
+					
+				})
 		},
 		_cancleFriend(id){
 
@@ -99,8 +136,13 @@ export default {
 						duration: 2000
 					})	
 
-						this._followFansList();
-						this._fansList();
+				if(this.type==1){
+
+					this._searchFriend();
+					
+				}else{
+					this._searchUser();
+				}
 			}).catch((res)=>{
 
 					wx.showToast({
@@ -121,8 +163,13 @@ export default {
 						icon: 'none',
 						duration: 2000
 					})	
-						this._followFansList();
-						this._fansList();
+					if(this.type==1){
+	
+						this._searchFriend();
+						
+					}else{
+						this._searchUser();
+					}
 			}).catch((res)=>{
 
 					wx.showToast({
@@ -133,54 +180,15 @@ export default {
 				
 			})
 			
-		},
-		_followFansList(){
-				wx.showLoading({
-					title: '加载中',
-				})			
-			followFansList().then((res)=>{
-				if(this.active==1){
-					this.data = res;
-				}
-				this.meFollow = res.length;  
-				wx.hideLoading();
-				wx.stopPullDownRefresh();
-			}).catch((res)=>{
-					wx.hideLoading();
-					wx.stopPullDownRefresh();
-					wx.showToast({
-						title: res.message,
-						icon: 'none',
-						duration: 2000
-					})				
-			})			
+		},		
+		handleBrack(){
 			
-			
-			
-		},
-		_fansList(){
-				wx.showLoading({
-					title: '加载中',
-				})			
-			fansList().then((res)=>{
-					
-				if(this.active==2){
-					this.data = res;
-				}
-				this.followMe = res.length;  
-				wx.hideLoading();
-				wx.stopPullDownRefresh();
-			}).catch((res)=>{
-					wx.hideLoading();
-					wx.stopPullDownRefresh();
-					wx.showToast({
-						title: res.message,
-						icon: 'none',
-						duration: 2000
-					})				
-			})
+						wx.navigateBack({
+						  delta: 1
+						})				
 			
 		}
+
 	}
 
 }
@@ -206,48 +214,55 @@ export default {
 		height: 36px;
 		width: 100%;
 		.nav-list{
+			position: relative;
 			width: 100%;
 			height: 36px;
 			box-sizing: border-box;
 			padding: 0 10px;
-			display: flex;
-			.left-btn,.right-btn{
-				flex: 2;
-
-			}
-			.icon_search{
+			padding-right: 60px;
+			.nav-btn{
+				position: absolute;
+				height: 36px;
+				width: 60px;
+				bottom: 3px;
+				right: 0;
+				.btn-colse{
+					height: 36px;
+					line-height: 36px;
+					width: 50px;
+					text-align: center;
 					float: left;
-					margin-top: 8px;
-					height: 20px;
-					width: 20px;
-				}			
-			.icon_right{
-					float:right;
-					margin-top: 8px;
-					height: 20px;
-					width: 20px;				
+					font-size: 12px;
+					color: #FF5B40;
+					background: none;
+					outline: none;
+				}
 			}
-			
 			.nav-item{
 				position: relative;
-				flex: 4;
-				text-align: center;
-				line-height: 36px;
-				font-size: 14px;
+				width: 100%;
+				height: 30px;
+				background: #F1F1F1;
+				border-radius:100px ;				
+				padding-left: 30px;
+				box-sizing: border-box;
 				color: #333;
-				&.active {
-					color: #FF5B40;
-				}
-				&.active::after {
+				.search-img{
 					position: absolute;
-					content: '';
-					height: 2px;
-					width: 70px;
-					bottom: 5px;
-					background: #FF5B40;
-					left: 50%;
-					margin-left: -35px;
-				}				
+					z-index: 10;
+					height: 14px;
+					width: 14px;
+					top: 50%;
+					margin-top: -7px;
+					left: 10px;
+				}
+				.inputKey{
+					margin-top: 2px;	
+					height: 32px;
+					width: 100%;
+					font-size: 12px;
+					box-sizing: border-box;	
+				}
 			}
 			
 		}

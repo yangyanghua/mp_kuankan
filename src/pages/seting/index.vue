@@ -8,22 +8,22 @@
 		<ul class="seting-list">
 			
 			<li class="set-item">
-				<button class="set-btn" hover-class="active" >推荐快看给朋友
+				<button class="set-btn" open-type="share"   hover-class="active" >推荐快看给朋友
 						<image class="icon_right" src="../../static/images/right.png"/>
 				</button>
 			</li>
 			<li class="set-item">
-				<button class="set-btn" hover-class="active" >联系我们
+				<button class="set-btn" @tap="linkTo('../contactUs/main')"  hover-class="active" >联系我们
 					<image class="icon_right" src="../../static/images/right.png"/>
 				</button>
 			</li>			
-			<li class="set-item">
+			<!--<li class="set-item">
 				<button class="set-btn" hover-class="active" >关于
 					<image class="icon_right" src="../../static/images/right.png"/>
 				</button>
-			</li>			
+			</li>			-->
 			<li class="set-item logout">
-				<button class="set-btn out-btn" hover-class="active" >退出登录</button>
+				<button class="set-btn out-btn"  @tap="logout"  hover-class="active" >退出登录</button>
 			</li>				
 		</ul>
 
@@ -46,17 +46,59 @@ export default {
 
   data () {
     return {
-      logs: [],
-      imgUrls: [
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/newsPicture/05558951-de60-49fb-b674-dd906c8897a6',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/coursePicture/0fbcfdf7-0040-4692-8f84-78bb21f3395d',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/management-school-picture/7683b32e-4e44-4b2f-9c03-c21f34320870'
-      ]
+    	
+    	
     }
   },
+		onShareAppMessage: function() {
 
-  created () {
-  }
+			return {
+
+				title:'快看，跟我一起看真实的世界',
+				desc: '',
+				path: '/pages/index/main', // 路径，传递参数到指定页面。
+				imageUrl: '/static/images/photo_01.png'
+			}
+		},
+		methods:{
+		logout(){
+			wx.showModal({
+			  title: '提示',
+			  confirmColor:'#FF5B40',
+			  content: '是否退出登录？',
+			  success(res) {
+			    if (res.confirm) {
+			      
+								wx.removeStorage({
+								  key: 'userInfo',
+								  success(res) {
+								    
+										wx.switchTab({
+										  url: '../index/main'
+										})
+								    
+								    
+								  }
+								})
+			      
+			    } else if (res.cancel) {
+			      
+			      console.log('用户点击取消')
+			      
+			    }
+			  }
+			})			
+		},
+		linkTo(path){
+			
+							wx.navigateTo({
+								url: path
+							})			
+			
+		},			
+			
+		}
+		
 }
 </script>
 

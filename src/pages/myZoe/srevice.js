@@ -24,5 +24,7 @@ export const cityList = (params = {}) => {
 export const countryList = (params = {}) => {
 	return requstGet(api.countryList,params);
 }
-
+export const collectionDynamic = (params = {}) => {
+	return requstGet(api.collectionDynamic,params);
+}
 

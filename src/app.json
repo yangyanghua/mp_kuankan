@@ -1,13 +1,17 @@
 {
   "pages": [
-  	"pages/myZoe/main",  
-  	"pages/message/main",
-  	"pages/fans/main",
+  	"pages/detail/main",
   	"pages/index/main",
+  	"pages/searchDynamic/main",
+  	"pages/fans/main",
+  	"pages/searchUser/main",	
+  	"pages/myZoe/main",
+  	"pages/contactUs/main",	
+  	"pages/addres/main",  
+  	"pages/message/main",
   	"pages/login/main",	
   	"pages/editDetail/main",
   	"pages/userInfo/main",	
-  	"pages/detail/main",
   	"pages/seting/main"
   	
   ],

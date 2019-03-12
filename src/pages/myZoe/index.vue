@@ -4,7 +4,7 @@
 	<div class="top-bar">
 		<ul class="nav-list">
 			<li class="left-btn">
-				<image class="icon_search" src="../../static/images/iconset.png"/>
+				<image class="icon_search" @tap="linkTo('../seting/main')" src="../../static/images/iconset.png"/>
 			</li>
 			<li class="nav-item">ID:{{userDetail.no}}</li>	
 			<li class="right-btn">
@@ -79,7 +79,8 @@
 					<ul class="data-list list-left">
 						<li class="data-item" v-for="(item,index) in data1" :key="index" >
 							<image class="data-img" mode="widthFix" :src="item.firstUrl"/>
-							<p class="data-title">{{item.content}}</p>	
+							<p class="data-title" v-if="item.title" >{{item.title}}</p>
+							
 							<div class="user-info">
 								<div class="user-image">
 									<image class="user-img" v-if="!userDetail.avatar" src="../../static/images/shouq/photo_logo2.png"/>
@@ -98,7 +99,7 @@
 					<ul class="data-list list-right">
 						<li class="data-item" v-for="(item,index) in data2" :key="index" >
 							<image class="data-img" mode="widthFix" :src="item.firstUrl"/>
-							<p class="data-title">{{item.content}}</p>	
+							<p class="data-title" v-if="item.title" >{{item.title}}</p>
 							<div class="user-info">
 								<div class="user-image">
 									<image class="user-img" v-if="!userDetail.avatar" src="../../static/images/shouq/photo_logo2.png"/>
@@ -130,7 +131,7 @@
 
 <script>
 
-import {getUserDetail, getDynamicList, cityList,countryList} from './srevice.js';
+import {getUserDetail, getDynamicList, cityList,countryList, collectionDynamic} from './srevice.js';
 import { formatTime } from '@/utils/index.js';
 export default {
 
@@ -186,6 +187,13 @@ export default {
 
 		},  
 	methods:{
+		linkTo(path){
+			
+							wx.navigateTo({
+								url: path
+							})			
+			
+		},
 		handelNav(index){
 			
 			if(this.active != index){
@@ -194,9 +202,11 @@ export default {
 				if(index === 1){
 						this._getDynamicList(this.form,true);	
 				}else if(index === 2){
-					
 					this._cityList(this.form,true);	
-					
+				}else if(index === 3){
+					this._countryList(this.form,true);	
+				}else if(index === 4){
+					this._collectionDynamic(this.form,true);
 				}
 				
 			}
@@ -219,8 +229,107 @@ export default {
 			
 		},
 
+		_collectionDynamic(opt,empty){
+			
+			let vm = this;
+				wx.showLoading({
+					title: '加载中',
+				})
+				
+			collectionDynamic(opt).then((res)=>{
+					if(empty){
+						vm.data2 = [];
+						vm.data1 = [];
+					};
+
+							if(res.length>0){
+								vm.nomore = false
+							}else{
+								vm.nomore = true;			
+							}
+
+					res.forEach((item,index)=>{
+								item.updateTime1 =  formatTime(new Date(item.updateTime));							
+								if(Math.ceil(index % 2) == 0) {
+									vm.data1.push(item)
+								} else {
+									vm.data2.push(item)
+								}										
+
+					})
+					if(vm.data2.length==0&&vm.data2.length==0){
+						vm.isEmpty = true;
+					}
+					wx.hideLoading();
+					wx.stopPullDownRefresh();				
+			}).catch((res)=>{
+
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+
+			})
+			
+		},
 
 
+
+		_countryList(opt,empty){
+			
+			let vm = this;
+				wx.showLoading({
+					title: '加载中',
+				})
+				
+			countryList(opt).then((res)=>{
+					if(empty){
+						vm.data2 = [];
+						vm.data1 = [];
+					};
+
+							if(res.length>0){
+								vm.nomore = false
+							}else{
+								vm.nomore = true;			
+							}
+
+					res.forEach((item,index)=>{
+						
+								item.startTime1 =  formatTime(new Date(item.startTime));
+								item.endTime1 =  formatTime(new Date(item.endTime));
+								item.startTime1 =  item.startTime1.split(' ')[0];
+								item.endTime1 =  item.endTime1.split(' ')[0];								
+								
+								item.firstUrl = item.url
+								if(Math.ceil(index % 2) == 0) {
+									vm.data1.push(item)
+								} else {
+									vm.data2.push(item)
+								}										
+
+					})
+					if(vm.data2.length==0&&vm.data2.length==0){
+						vm.isEmpty = true;
+					}
+					wx.hideLoading();
+					wx.stopPullDownRefresh();				
+			}).catch((res)=>{
+
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	
+
+			})
+			
+		},
 		_cityList(opt,empty){
 			
 			let vm = this;

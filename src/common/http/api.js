@@ -39,8 +39,10 @@ export const    findList         =    '/api/v2/dynamic/find/listv2' //首页-发
 export const    findListMap      =    '/api/v1/dynamic/map/polymeric/list' //首页-发现列表地图
 export const    hotList          =    '/api/v2/dynamic/hot/list' //首页-热门列表
 export const    hotListMap       =    '/api/v1/dynamic/map/hot/polymeric/list' //首页-热门列表地图模式
-
-export const    messageCenter       =    '/api/v1/user/message/center' //消息中心
-
-
+export const    messageCenter    =    '/api/v1/user/message/center' //消息中心
+export const    collectionDynamic=    '/api/v2/dynamic/collection/list' //收藏动态列表
+export const    regionList       =    '/api/v1/user/follow/region/list' //用户关注地址列表
+export const    feedback         =    '/api/v1/user/feedback' //用户反馈
+export const    searchUser         =    '/api/v1/user/search' //搜索用户
+export const    searchFriend         =    '/api/v1/user/search/friend' //搜索好友
 

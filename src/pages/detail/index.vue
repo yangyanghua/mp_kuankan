@@ -44,30 +44,13 @@
 
 
 				<swiper class="swiper-content" display-multiple-items="3.5" >
-				  <block>
+				 
+				   <block v-for="(item,index) in detail.cityVos" :key="index" >
 				    <swiper-item>
-				      <div class="swiper-slide"><p class="date">10.20</p><p class="cityname">广西</p><span class="line"></span></div>
+				      <div class="swiper-slide" v-if="item" ><p class="date">{{item.time}}</p><p class="cityname">{{item.cityName}}</p><span class="line"></span></div>
 				    </swiper-item>
 				  </block>
 				  
-				  <block>
-				    <swiper-item>
-				      <div class="swiper-slide"><p class="date">10.20</p><p class="cityname">广西</p><span class="line"></span></div>
-				    </swiper-item>
-				  </block>	
-				  
-				  <block>
-				    <swiper-item>
-				      <div class="swiper-slide"><p class="date">10.20</p><p class="cityname">广西</p><span class="line"></span></div>
-				    </swiper-item>
-				  </block>					  
-
-				  <block>
-				    <swiper-item>
-				      <div class="swiper-slide"><p class="date">10.20</p><p class="cityname">广西</p><span class="line"></span></div>
-				    </swiper-item>
-				  </block>	
-
 				</swiper>
 
 					<image class="map_bg"  src="../../static/images/photomap2x.png"/>
@@ -167,7 +150,7 @@
 				
 			</div>
 
-			<div class="stars">
+			<div class="stars" v-bind:class="{'active':starsShow}" >
 				<div class="maker"></div>
 			
 			<div class="stars-content">
@@ -201,25 +184,57 @@
 </template>
 
 <script>
-import card from '@/components/card'
+import {getDetail} from './srevice.js'
 
 export default {
-  components: {
-    card
-  },
+
 
   data () {
     return {
-      logs: [],
-      imgUrls: [
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/newsPicture/05558951-de60-49fb-b674-dd906c8897a6',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/coursePicture/0fbcfdf7-0040-4692-8f84-78bb21f3395d',
-        'http://mss.sankuai.com/v1/mss_51a7233366a4427fa6132a6ce72dbe54/management-school-picture/7683b32e-4e44-4b2f-9c03-c21f34320870'
-      ]
+      starsShow:false,
+      detail:{cityVos:[],photos:[]}
     }
   },
+	onPullDownRefresh() {
 
-  created () {
+		},    
+  onLoad(){
+  	
+  	this._getDetail('9851');
+  	
+  },
+  methods:{
+  	
+  	_getDetail(id){
+ 				wx.showLoading({
+					title: '加载中',
+				})	 		
+  		getDetail({id:id,lang:'zh-CN'}).then((res)=>{
+  					
+  					if(res.cityVos.length < 4){
+  						
+  						res.cityVos.length = 4
+  						
+  					}
+  			
+  					this.detail = res;
+					wx.hideLoading();
+					wx.stopPullDownRefresh();  			
+  		}).catch((res)=>{
+  			
+					wx.hideLoading();
+					wx.stopPullDownRefresh();
+					wx.showToast({
+						title: res.message,
+						icon: 'none',
+						duration: 2000
+					})	  			
+  			
+  		})
+
+  		
+  	}
+  	
   }
 }
 </script>
@@ -475,7 +490,7 @@ export default {
 	border-top:1px  solid #FFFFFF;
 	height: 90px;
 	text-align: center;
-	font-size: 14px;
+	font-size: 12px;
 	color: #666666;
 	z-index: 10; 
 }
@@ -483,13 +498,14 @@ export default {
 		overflow: hidden;
 		text-overflow:ellipsis;
 		white-space: nowrap;
-		margin-top: 11px;	
+		margin-top: 16px;	
 }
 
 
 
  .swiper-slide .date{
 	margin-top: 20px;
+	font-size: 11px;
 }
 
  .swiper-slide .line{
@@ -877,8 +893,7 @@ background: #fff;
 
 .stars{
 	position: fixed;
-	height: 100vh;
-/*	height: 0;*/
+	height: 0;
 	text-align: center;
 	width: 100%;
 	background: none;
@@ -886,6 +901,9 @@ background: #fff;
 	bottom: 0;
 	overflow: hidden;
 	transition: all 0.3s;
+	&.active{
+		height: 100vh;
+	}
 	.maker{
 		position: absolute;
 		height: 100%;
