@@ -118,7 +118,6 @@
 								<div class="commentsTxt">
 								<p class="commentInfo">
 									<span class="userName">{{item.user.nickName}}</span>
-									
 									<span class="date">{{item.createTime1}}</span>
 								</p>	 
 								<p class="commentContent">
@@ -168,7 +167,7 @@
 			<div class="footer" v-if="isReply" >
 				<ul class="footerLsit">
 	 				<li class="f-item  comInput">
-	 					<input  class="inputs" v-model="form.content" confirm-type="done" @confirm="sendComment"  :placeholder="'@'+replyUser.nickName" />
+	 					<input  class="inputs" v-model="form.content" confirm-type="done" :focus="focus"  @confirm="sendComment"  :placeholder="'@'+replyUser.nickName" />
 	 					<image class="icons-edit" src="../../static/images/edit2x.png"/>
 					</li> 				
 					<li class="f-item close" @tap="colseReply" >
@@ -204,7 +203,7 @@
 </template>
 
 <script>
-import {getDetail,goodAdd,cancleAdd,collection,collectionCancle,commentAdd,score} from './srevice.js'
+import {getDetail,goodAdd,cancleAdd,collection,collectionCancle,commentAdd,score,dynamicReport} from './srevice.js'
 import {formatTime} from '@/utils/index.js'
 export default {
 
@@ -214,6 +213,7 @@ export default {
       scoreNum:0,
       user:{},
       isReply:false,
+      focus:false,
       replyUser:{},
       form:{
       	dynamicId:'',
@@ -227,9 +227,10 @@ export default {
 	onPullDownRefresh() {
 			this._getDetail(this.id);
 		},    
-  onLoad(){
-  	this.id = '64';
-  	this.form.dynamicId = '64';
+  onLoad(option){
+  	let id = option.id
+  	this.id = id;
+  	this.form.dynamicId = id;
   	this._getDetail(this.id);
   	
   },
@@ -247,15 +248,36 @@ export default {
   	handelReply(user){
   		this.isReply = true;
   		this.replyUser = user;
+  		this.focus = true;
   	},
   	colseReply(){
   		this.isReply = false;
+  		this.focus = true;
   	},
   	handleTapMore(){
+  		let vm = this; 
 			wx.showActionSheet({
 			  itemList: ['举报'],
 			  success(res) {
 			    console.log(res.tapIndex)
+			    
+			    dynamicReport({id:vm.id,status:1}).then((res)=>{
+						wx.showToast({
+							title: '举报成功',
+							icon: 'none',
+							duration: 2000
+						})			    	
+			    	
+			    }).catch((res)=>{
+			    	
+						wx.showToast({
+							title: res.message,
+							icon: 'none',
+							duration: 2000
+						})			    	
+			    	
+			    })
+			    
 			  },
 			  fail(res) {
 			    console.log(res.errMsg)

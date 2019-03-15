@@ -170,12 +170,7 @@ export default {
 			if(!this.nomore){
 				if(this.active == 1){
 					this._getDynamicList(this.form,false);
-				}else if(this.active == 2) {
-
-				} else if(this.active == 3) {
-
 				}
-			
 			}else{
 					wx.showToast({
 						title: '没有更多数据啦',

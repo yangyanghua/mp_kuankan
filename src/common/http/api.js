@@ -45,4 +45,4 @@ export const    regionList       =    '/api/v1/user/follow/region/list' //用户
 export const    feedback         =    '/api/v1/user/feedback' //用户反馈
 export const    searchUser         =    '/api/v1/user/search' //搜索用户
 export const    searchFriend         =    '/api/v1/user/search/friend' //搜索好友
-
+export const    dynamicReport         =    '/api/v1/dynamic/report' //动态举报

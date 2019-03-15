@@ -4,13 +4,16 @@
 
 			<div class="fans" >
 				<ul class="fansList">
-					<li class="fansItem" v-for="(item,index) in data" :key="index" >
-						<div class="fansImage"><image class="user-img" :src="item.messageEvent.user.avatar"/></div>
-						<div class="fansInfo">
+					<li class="fansItem" v-for="(item,index) in data" :key="index"  >
+						<div class="fansImage">
+							<image class="user-img" v-if="item.messageEvent.user.avatar" :src="item.messageEvent.user.avatar"/>
+							<image class="user-img" v-if="!item.messageEvent.user.avatar" src="../../static/images/shouq/photo_logo2.png"/>
+						</div>
+						<div class="fansInfo" @tap="linkToDynamic(item.messageEvent.originId)" >
 							<p class="fansName"> <span class="userName" >{{item.messageEvent.user.nickName}}</span>&nbsp;<span class="eventName" >{{item.messageEvent.typeName}}</span> </p>
 							<p class="time" >{{item.messageEvent.createTime1}}</p>
 						</div>
-						<div class="info-img-box">
+						<div class="info-img-box" @tap="linkToDynamic(item.messageEvent.originId)" >
 								<image class="info-img" mode="aspectFill" :src="item.messageEvent.url"/>
 						</div>						
 					</li>		
@@ -53,7 +56,13 @@ export default {
   	
   },  
 	methods:{
-		
+			linkToDynamic(id){
+				
+				wx.navigateTo({
+					url: '../detail/main?id='+id
+				})			
+				
+			},			
 		_messageCenter(){
 				wx.showLoading({
 					title: '加载中',

@@ -29,7 +29,7 @@ export const score = (params = {}) => {
 }
 
 
-//export const fansList = (params = {}) => {
-//	return requstPost(api.fansList,params);
-//}
+export const dynamicReport = (params = {}) => {
+	return requstPost(api.dynamicReport,params);
+}
 

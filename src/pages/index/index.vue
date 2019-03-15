@@ -4,7 +4,7 @@
 		<div class="header">
 			<ul class="nav-list">
 				<li class="left-btn">
-					<image class="icon_search" src="../../static/images/icon_search.png" />
+					<image @tap="linkTo('../searchDynamic/main')" class="icon_search" src="../../static/images/icon_search.png" />
 				</li>
 				<li class="nav-item" v-if="userInfo.id" v-bind:class="{'active':active == 1}" @tap="handleNav(1)">关注</li>
 				<li class="nav-item" v-bind:class="{'active':active == 2}" @tap="handleNav(2)">发现</li>
@@ -22,7 +22,7 @@
 			<div class="content">
 
 				<ul class="data-list list-left">
-					<li class="data-item" v-for="(item,index) in data1" :key="index">
+					<li class="data-item" v-for="(item,index) in data1" :key="index" @tap="linkToDynamic(item.id)" >
 						<image class="data-img" mode="widthFix" :src="item.firstUrl" />
 						<p class="data-title">{{item.title?item.title:''}}</p>
 						<div class="user-info">
@@ -38,7 +38,7 @@
 				</ul>
 
 				<ul class="data-list list-right">
-					<li class="data-item" v-for="(item,index) in data2" :key="index">
+					<li class="data-item" v-for="(item,index) in data2" :key="index" @tap="linkToDynamic(item.id)" >
 						<image class="data-img" mode="widthFix" :src="item.firstUrl" />
 						<p class="data-title">{{item.title?item.title:''}}</p>
 						<div class="user-info">
@@ -176,6 +176,20 @@
 
 		},
 		methods: {
+			linkToDynamic(id){
+				
+				wx.navigateTo({
+					url: '../detail/main?id='+id
+				})			
+				
+			},			
+			linkTo(path){
+				
+								wx.navigateTo({
+									url: path
+								})			
+				
+			},				
 			changeType(type){	
 				let vm = this;
 				this.dataType = type;		
@@ -285,6 +299,9 @@
 			},
 			makertap(e) {
 				console.log(e);
+				let id = e.mp.markerId;
+				this.linkToDynamic(id);		
+				
 			},
 
 			_followList(opt, empty) {

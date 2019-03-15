@@ -4,25 +4,24 @@
 
 	
 	<div class="content">
-
-				<!--数据列表-->
-		<div class="commentsListContent">			
-				<ul class="likeList commentsList">
-						<li class="commentsItem" v-for="(item,index) in data" :key="index" >
-							<div class="userPortrait">
-								<image class="userPortrait-img" :src="item.user.avatar"/>
-							</div>
-							<div class="commentsTxt">
-							<p class="commentInfo">
-							<span class="userName">{{item.user.nickName}}</span>
-							<span class="date">{{item.createTime1}}</span>
-							</p>	 							
-							</div>								
-						</li>						
-				</ul>
-		</div>
-
-
+			<scroll-view  scroll-y>
+							<!--数据列表-->
+					<div class="commentsListContent">			
+							<ul class="likeList commentsList">
+									<li class="commentsItem" v-for="(item,index) in data" :key="index" >
+										<div class="userPortrait">
+											<image class="userPortrait-img" :src="item.user.avatar"/>
+										</div>
+										<div class="commentsTxt">
+										<p class="commentInfo">
+										<span class="userName">{{item.user.nickName}}</span>
+										<span class="date">{{item.createTime1}}</span>
+										</p>	 							
+										</div>								
+									</li>						
+							</ul>
+					</div>
+			</scroll-view>
 	</div>
 
 
@@ -38,6 +37,7 @@ export default {
   data () {
     return {
     	data:[],
+    	nomore:false,
     	form:{
 			dynamicId:'64',
 			isLeast:true,
@@ -49,9 +49,21 @@ export default {
   },
 
 		onPullDownRefresh() {
+				this.form.applaudId = '';
 				this._getGoods(this.form,true);
 		}, 
+		onReachBottom() {
+				if(!this.nomore){
+					this._getGoods(this.form,false);
+				}
+					
+
+		},
+		onShow(){
+			this.form.applaudId = '';
+		},
 		onLoad(){
+			this.form.applaudId = '';
 			this.form.dynamicId = '64';
 			this._getGoods(this.form,true);
 		},
@@ -59,9 +71,19 @@ export default {
 		_getGoods(opt,empty){
 				wx.showLoading({
 					title: '加载中',
-				})				
+				})	
+				if(opt.applaudId){
+					opt.isLeast = false;
+				}else{
+					opt.isLeast = true;
+				}				
 			getGoods(opt).then((res)=>{
 				let arr = [];
+				if(res.applauds.length>0){
+							this.form.applaudId = res.applauds[res.applauds.length-1].id;
+				}else{
+					this.nomore = true;
+				}
 				res.applauds.forEach((item)=>{			
 					item.user =  res.bases.filter((item1)=>{ return item1.id==item.uid})[0];
 					item.createTime1 =  formatTime(new Date(item.createTime));
@@ -126,6 +148,7 @@ export default {
 
 			.commentsListContent{
 				border: none;
+				
 			}
 			.commentsListContent .commentsList .commentsItem{
 				width: 100%;

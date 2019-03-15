@@ -1,10 +1,11 @@
 {
   "pages": [
-  	"pages/applauds/main",
-  	"pages/detail/main",
-  	"pages/myZoe/main",
   	"pages/index/main",
-  	"pages/searchDynamic/main",
+  	"pages/searchDynamic/main",	
+  	"pages/detail/main",
+  	"pages/comment/main",
+  	"pages/myZoe/main",
+  	"pages/applauds/main",		 
   	"pages/fans/main",
   	"pages/searchUser/main",	
   	"pages/contactUs/main",	
